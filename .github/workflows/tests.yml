@@ -50,4 +50,4 @@ jobs:
       #----------------------------------------------
       - name: Run tests
         run: |
-          poetry run pytest --cov=. tests
+          poetry run pytest --cov-config=.coveragerc --cov=. tests
