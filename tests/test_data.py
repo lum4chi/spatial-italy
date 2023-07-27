@@ -55,7 +55,7 @@ def test_request_POSAS_2023_it_Comuni():
 
 def test_load_population_by_municipalities(mocker, POSAS_2023_it_Comuni_sample):
     mocker.patch(
-        "spatial_italy.data.request_population_by_municipalities",
+        "spatial_italy.data.request_POSAS_2023_it_Comuni",
         return_value=POSAS_2023_it_Comuni_sample,
     )
     df = load_population_by_municipalities()
