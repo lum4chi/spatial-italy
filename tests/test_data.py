@@ -1,11 +1,14 @@
 import pandas as pd
 import pytest
 
-from spatial_italy.data import load_population_by_municipalities
+from spatial_italy.data import (
+    load_population_by_municipalities,
+    request_POSAS_2023_it_Comuni,
+)
 
 
 @pytest.fixture
-def POSAS_2023_it_Comuni():
+def POSAS_2023_it_Comuni_sample():
     return pd.DataFrame.from_dict(
         {
             "index": [
@@ -46,10 +49,14 @@ def POSAS_2023_it_Comuni():
     )
 
 
-def test_load_population_by_municipalities(mocker, POSAS_2023_it_Comuni):
-    # mocker.patch(
-    #     "spatial_italy.data.request_population_by_municipalities",
-    #     return_value=POSAS_2023_it_Comuni,
-    # )
+def test_request_POSAS_2023_it_Comuni():
+    assert isinstance(request_POSAS_2023_it_Comuni(), pd.DataFrame)
+
+
+def test_load_population_by_municipalities(mocker, POSAS_2023_it_Comuni_sample):
+    mocker.patch(
+        "spatial_italy.data.request_population_by_municipalities",
+        return_value=POSAS_2023_it_Comuni_sample,
+    )
     df = load_population_by_municipalities()
     assert isinstance(df, pd.DataFrame)

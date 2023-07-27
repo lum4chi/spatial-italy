@@ -9,7 +9,7 @@ import requests
 import streamlit as st
 
 
-def request_population_by_municipalities():
+def request_POSAS_2023_it_Comuni():
     return pd.read_table(
         "https://demo.istat.it/data/posas/POSAS_2023_it_Comuni.zip",
         compression="zip",
@@ -20,7 +20,7 @@ def request_population_by_municipalities():
 
 @st.cache_data()
 def load_population_by_municipalities():
-    df = request_population_by_municipalities()
+    df = request_POSAS_2023_it_Comuni()
     # Compute total population by Comune
     df["Popolazione"] = df["Totale maschi"] + df["Totale femmine"]
     df = df.groupby("Comune")["Popolazione"].sum().to_frame().reset_index()
