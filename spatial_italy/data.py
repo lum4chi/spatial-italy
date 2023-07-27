@@ -9,14 +9,18 @@ import requests
 import streamlit as st
 
 
-@st.cache_data()
-def load_population_by_municipalities():
-    df = pd.read_table(
+def request_population_by_municipalities():
+    return pd.read_table(
         "https://demo.istat.it/data/posas/POSAS_2023_it_Comuni.zip",
         compression="zip",
         sep=",",
         encoding="cp1252",
     )
+
+
+@st.cache_data()
+def load_population_by_municipalities():
+    df = request_population_by_municipalities()
     # Compute total population by Comune
     df["Popolazione"] = df["Totale maschi"] + df["Totale femmine"]
     df = df.groupby("Comune")["Popolazione"].sum().to_frame().reset_index()
