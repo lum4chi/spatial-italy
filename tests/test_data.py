@@ -47,9 +47,9 @@ def POSAS_2023_it_Comuni():
 
 
 def test_load_population_by_municipalities(mocker, POSAS_2023_it_Comuni):
-    mocker.patch(
-        "spatial_italy.data.request_population_by_municipalities",
-        return_value=POSAS_2023_it_Comuni,
-    )
+    # mocker.patch(
+    #     "spatial_italy.data.request_population_by_municipalities",
+    #     return_value=POSAS_2023_it_Comuni,
+    # )
     df = load_population_by_municipalities()
     assert isinstance(df, pd.DataFrame)
