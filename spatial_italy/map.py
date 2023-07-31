@@ -10,7 +10,7 @@ def plot_municipalities_map():
     # Map
     m = leafmap.Map()
     # Remove unnecessary columns
-    data = gdf.assign(Population=gdf.Population.fillna(0).astype(int)).drop(
+    data = gdf.assign(Population=gdf.Population.fillna(-1).astype(int)).drop(
         columns="COD_RIP COD_REG COD_PROV COD_CM COD_UTS PRO_COM_T COMUNE CC_UTS Shape_Leng".split()
     )
     m.add_data(
