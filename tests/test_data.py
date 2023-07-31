@@ -1,7 +1,5 @@
 import geopandas as gpd
 import pandas as pd
-import pytest
-import json
 
 from spatial_italy.data import (
     load_population_by_municipalities,
@@ -37,3 +35,7 @@ def test_load_municipalities_map(mocker, confini_amministrativi_comuni_sample):
     )
     gdf = load_municipalities_map()
     assert isinstance(gdf, gpd.GeoDataFrame)
+    assert all(gdf.loc[gdf.COMUNE == "Vandoies", "COMUNE_A"] == "Vandoies / Vintl")
+
+    gdf = load_municipalities_map(population=True)
+    assert "Popolazione" in gdf.columns

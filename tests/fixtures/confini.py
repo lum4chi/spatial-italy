@@ -9,6 +9,36 @@ def confini_amministrativi_comuni_sample():
             "type": "FeatureCollection",
             "features": [
                 {
+                    "id": "430",
+                    "type": "Feature",
+                    "properties": {
+                        "COD_RIP": 2,
+                        "COD_REG": 4,
+                        "COD_PROV": 21,
+                        "COD_CM": 0,
+                        "COD_UTS": 21,
+                        "PRO_COM": 21110,
+                        "PRO_COM_T": "021110",
+                        "COMUNE": "Vandoies",
+                        "COMUNE_A": "Vintl",
+                        "CC_UTS": 0,
+                        "Shape_Leng": 60124.5951433,
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [708188.5301000001, 5203226.8192],
+                                [708362.4009999996, 5188786.8344],
+                                [711254.585, 5186030.8365],
+                                [705157.9670000002, 5187876.336200001],
+                                [698950.1639, 5200366.3248],
+                                [708188.5301000001, 5203226.8192],
+                            ]
+                        ],
+                    },
+                },
+                {
                     "id": "1949",
                     "type": "Feature",
                     "properties": {

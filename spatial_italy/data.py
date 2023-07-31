@@ -18,13 +18,12 @@ def request_POSAS_2023_it_Comuni() -> pd.DataFrame:
     )
 
 
-@st.cache_data()
 def load_population_by_municipalities():
     df = request_POSAS_2023_it_Comuni()
     # Compute total population by Comune
-    df["Popolazione"] = df["Totale maschi"] + df["Totale femmine"]
+    df["Population"] = df["Totale maschi"] + df["Totale femmine"]
     df = (
-        df.groupby(["Codice comune", "Comune"])["Popolazione"]
+        df.groupby(["Codice comune", "Comune"])["Population"]
         .sum()
         .to_frame()
         .reset_index()
@@ -49,5 +48,17 @@ def request_confini_amministrativi_comuni() -> gpd.GeoDataFrame:
 
 
 @st.cache_data()
-def load_municipalities_map():
-    return request_confini_amministrativi_comuni()
+def load_municipalities_map(population: bool = False):
+    gdf = request_confini_amministrativi_comuni()
+    # Compute full name for bilingual municipalities
+    gdf["COMUNE_A"] = gdf[["COMUNE", "COMUNE_A"]].apply(
+        lambda r: " / ".join(r.dropna()), axis=1
+    )
+    if population:
+        df = load_population_by_municipalities()
+        gdf = (
+            gdf.set_index("PRO_COM")
+            .join(df.set_index("Codice comune").Population)
+            .reset_index()
+        )
+    return gdf
