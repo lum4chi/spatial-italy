@@ -1,6 +1,7 @@
 {
     "python.testing.pytestArgs": [
         "-s",
+        "--cov-config=.coveragerc",
         "--cov=.",
         "tests"
     ],

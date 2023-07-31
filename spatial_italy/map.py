@@ -3,9 +3,10 @@ import geopandas as gpd
 import pyproj
 import plotly.express as px
 import json
+import leafmap
 
 
-def make_map(data: pd.DataFrame, gdf: gpd.GeoDataFrame):
+def make_map_plotly(data: pd.DataFrame, gdf: gpd.GeoDataFrame):
     # Simplify boundaries for a lighter html but also create small gaps between boundaries
     gdf["geometry"] = gdf.simplify(50)
     # In order to use Plotly, a reprojection is needed
