@@ -1,8 +1,10 @@
 import leafmap.foliumap as leafmap
+import streamlit as st
 
 from spatial_italy.data import load_municipalities_map
 
 
+@st.cache_data()
 def plot_municipalities_map():
     gdf = load_municipalities_map(population=True)
     # Map

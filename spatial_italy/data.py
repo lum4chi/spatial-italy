@@ -47,7 +47,6 @@ def request_confini_amministrativi_comuni() -> gpd.GeoDataFrame:
     return gdf
 
 
-@st.cache_data()
 def load_municipalities_map(population: bool = False):
     gdf = request_confini_amministrativi_comuni()
     # Compute full name for bilingual municipalities
