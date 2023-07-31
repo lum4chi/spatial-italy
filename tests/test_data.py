@@ -38,4 +38,4 @@ def test_load_municipalities_map(mocker, confini_amministrativi_comuni_sample):
     assert all(gdf.loc[gdf.COMUNE == "Vandoies", "COMUNE_A"] == "Vandoies / Vintl")
 
     gdf = load_municipalities_map(population=True)
-    assert "Popolazione" in gdf.columns
+    assert "Population" in gdf.columns
