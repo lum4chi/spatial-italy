@@ -1,13 +1,24 @@
 import leafmap.foliumap as leafmap
 import numpy as np
 import matplotlib
-from spatial_italy.data import load_municipalities_map
+import geopandas as gdp
+from spatial_italy.data import load_municipalities_frame
 
 
-def plot_municipalities_map():
-    gdf = load_municipalities_map(population=True)
-    # Map
-    m = leafmap.Map()
+def create_italy_map() -> leafmap.Map:
+    m = leafmap.Map(
+        draw_control=False,
+        measure_control=False,
+        fullscreen_control=False,
+        attribution_control=True,
+        center=(42.8333, 12.8333),
+        zoom=5,
+    )
+    return m
+
+
+def add_municipalities_population(m: leafmap.Map):
+    gdf = load_municipalities_frame(population=True)
     # Remove unnecessary columns
     data = gdf.assign(Population=gdf.Population.fillna(-1).astype(int)).drop(
         columns="COD_RIP COD_REG COD_PROV COD_CM COD_UTS PRO_COM_T COMUNE CC_UTS Shape_Leng".split()

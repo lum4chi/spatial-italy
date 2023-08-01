@@ -4,7 +4,7 @@ import geopandas as gpd
 
 @pytest.fixture
 def confini_amministrativi_comuni_sample():
-    return gpd.GeoDataFrame.from_features(
+    gdf = gpd.GeoDataFrame.from_features(
         {
             "type": "FeatureCollection",
             "features": [
@@ -293,3 +293,5 @@ def confini_amministrativi_comuni_sample():
             },
         }
     )
+    gdf.crs = "epsg:32632"
+    return gdf
