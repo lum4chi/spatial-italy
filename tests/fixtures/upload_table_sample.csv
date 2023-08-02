@@ -1,7 +1,7 @@
-Codice comune,COMUNE,Random_value
-21110,Vandoies,6740
-15146,Milano,6129
-16065,Castro,27068
-58091,Roma,38626
-63049,Napoli,43215
-75096,Castro,14470
+Codice comune,Random_value_1,Random_value_2
+21110,4.0,345.0
+15146,9.0,568.0
+16065,7.0,
+58091,7.0,792.0
+63049,,595.0
+75096,7.0,390.0

@@ -1,5 +1,3 @@
-import traceback
-
 import pandas as pd
 import streamlit as st
 
@@ -8,6 +6,7 @@ from spatial_italy.map import (
     add_custom_layer,
     add_municipality_populations_layer,
     create_italy_map,
+    legend_position_generator,
 )
 
 app_config("Home")
@@ -46,8 +45,8 @@ if uploaded_file:
         procom_label = st.sidebar.selectbox(
             "Select municipality key column [PRO_COM]:", data.columns, index=0
         )
-        value_label = st.sidebar.selectbox(
-            "Select data column:", ["-"] + data.columns.to_list(), index=0
+        value_labels = st.sidebar.multiselect(
+            "Select data column:", data.columns.difference([procom_label])
         )
         st.sidebar.dataframe(data)
 
@@ -57,8 +56,11 @@ st.markdown(
     "Choose layers or upload your own data. Multiple layers can be choose by the top-right button. Legends can be dragged & dropped."
 )
 m = create_italy_map()
+legend_position = legend_position_generator()
 if layers_to_add and "Population" in layers_to_add:
-    m = add_municipality_populations_layer(m)
-if uploaded_file and not data.empty and value_label != "-":
-    m = add_custom_layer(m, data, procom_label, value_label)
+    pos = next(legend_position)
+    add_municipality_populations_layer(m, pos)
+if uploaded_file and not data.empty and value_labels:
+    for label, pos in zip(value_labels, legend_position):
+        add_custom_layer(m, data, procom_label, label, legend_position)
 m.to_streamlit()

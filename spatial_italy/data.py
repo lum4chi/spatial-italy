@@ -9,6 +9,7 @@ import requests
 import streamlit as st
 
 
+@st.cache_data
 def request_POSAS_2023_it_Comuni() -> pd.DataFrame:
     return pd.read_table(
         "https://demo.istat.it/data/posas/POSAS_2023_it_Comuni.zip",
@@ -31,6 +32,7 @@ def load_population_by_municipalities():
     return df
 
 
+@st.cache_data
 def request_confini_amministrativi_comuni() -> gpd.GeoDataFrame:
     # EPSG:32632 WGS 84 / UTM zone 32N
     shapes_url = "https://www.istat.it/storage/cartografia/confini_amministrativi/generalizzati/2023/Limiti01012023_g.zip"
@@ -65,7 +67,6 @@ def add_municipality_populations(gdf: gpd.GeoDataFrame):
     return gdf
 
 
-@st.cache_data()
 def load_municipalities_frame(population: bool = False):
     gdf = request_confini_amministrativi_comuni()
     gdf = add_bilingual_full_municipality_name(gdf)

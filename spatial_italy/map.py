@@ -1,3 +1,6 @@
+from itertools import cycle
+from typing import Literal
+
 import geopandas as gdp
 import leafmap.foliumap as leafmap
 import matplotlib
@@ -8,6 +11,13 @@ from spatial_italy.data import (
     load_municipalities_frame,
     request_confini_amministrativi_comuni,
 )
+
+LEGEND_POSITIONS_TYPE = Literal["topleft", "topright", "bottomleft", "bottomright"]
+
+
+def legend_position_generator():
+    for position in cycle(LEGEND_POSITIONS_TYPE.__args__):
+        yield position
 
 
 def create_italy_map() -> leafmap.Map:
@@ -21,7 +31,10 @@ def create_italy_map() -> leafmap.Map:
     return m
 
 
-def add_municipality_populations_layer(m: leafmap.Map):
+def add_municipality_populations_layer(
+    m: leafmap.Map,
+    legend_position: LEGEND_POSITIONS_TYPE = "bottomright",
+):
     gdf = load_municipalities_frame(population=True)
     # Remove unnecessary columns
     data = gdf.assign(Population=gdf.Population.fillna(-1).astype(int)).drop(
@@ -57,17 +70,22 @@ def add_municipality_populations_layer(m: leafmap.Map):
         # k=10,
         scheme="UserDefined",
         classification_kwds={"bins": bins},
+        legend_position=legend_position,  # leafmap does not honor legend_position!
+        legend_kwds={"draggable": True},
     )
-    return m
 
 
 def add_custom_layer(
-    m: leafmap.Map, df: pd.DataFrame, procom_label: str, value_label: str
+    m: leafmap.Map,
+    df: pd.DataFrame,
+    procom_label: str,
+    value_label: str,
+    legend_position: LEGEND_POSITIONS_TYPE = "bottomright",
 ):
     gdf = request_confini_amministrativi_comuni()
     gdf = (
         gdf.set_index("PRO_COM")
-        .join(df.set_index(procom_label)[value_label], how="right")
+        .join(df.set_index(procom_label)[value_label].dropna(), how="right")
         .reset_index()
     )
     m.add_data(
@@ -76,5 +94,6 @@ def add_custom_layer(
         layer_name=value_label,
         scheme="Quantiles",
         cmap="Reds",
+        legend_position=legend_position,  # leafmap does not honor legend_position!
+        legend_kwds={"draggable": True},
     )
-    return m
