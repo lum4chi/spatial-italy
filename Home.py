@@ -20,14 +20,16 @@ layers_to_add = st.sidebar.multiselect("Available layers:", LAYERS)
 
 ## Custom dataset upload
 st.sidebar.divider()
+st.sidebar.markdown("Upload a tabular file with at least 2 column.")
 st.sidebar.markdown(
-    """Upload a tabular file with at least 2 column.
-
-    1. municipality keys
+    """
+    1. municipality keys 
     2. values to be displayed
     """
 )
-uploaded_file = st.sidebar.file_uploader("", type=["csv", "txt", "xlsx"])
+uploaded_file = st.sidebar.file_uploader(
+    "Select a file:", type=["csv", "txt", "xlsx"], label_visibility="collapsed"
+)
 if uploaded_file:
     st.sidebar.divider()
     if uploaded_file.name.split(".")[-1] == "xlsx":
