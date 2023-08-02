@@ -9,7 +9,6 @@ def create_italy_map() -> leafmap.Map:
     m = leafmap.Map(
         draw_control=False,
         measure_control=False,
-        fullscreen_control=False,
         attribution_control=True,
         center=(42.8333, 12.8333),
         zoom=5,
