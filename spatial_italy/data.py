@@ -47,18 +47,28 @@ def request_confini_amministrativi_comuni() -> gpd.GeoDataFrame:
     return gdf
 
 
-@st.cache_data()
-def load_municipalities_frame(population: bool = False):
-    gdf = request_confini_amministrativi_comuni()
+def add_bilingual_full_municipality_name(gdf: gpd.GeoDataFrame):
     # Compute full name for bilingual municipalities
     gdf["COMUNE_A"] = gdf[["COMUNE", "COMUNE_A"]].apply(
         lambda r: " / ".join(r.dropna()), axis=1
     )
+    return gdf
+
+
+def add_municipality_populations(gdf: gpd.GeoDataFrame):
+    df = load_population_by_municipalities()
+    gdf = (
+        gdf.set_index("PRO_COM")
+        .join(df.set_index("Codice comune").Population)
+        .reset_index()
+    )
+    return gdf
+
+
+@st.cache_data()
+def load_municipalities_frame(population: bool = False):
+    gdf = request_confini_amministrativi_comuni()
+    gdf = add_bilingual_full_municipality_name(gdf)
     if population:
-        df = load_population_by_municipalities()
-        gdf = (
-            gdf.set_index("PRO_COM")
-            .join(df.set_index("Codice comune").Population)
-            .reset_index()
-        )
+        gdf = add_municipality_populations(gdf)
     return gdf

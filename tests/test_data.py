@@ -4,7 +4,9 @@ import pandas as pd
 from spatial_italy.data import (
     load_population_by_municipalities,
     request_confini_amministrativi_comuni,
+    add_bilingual_full_municipality_name,
     request_POSAS_2023_it_Comuni,
+    add_municipality_populations,
     load_municipalities_frame,
 )
 from .fixtures.demografia import POSAS_2023_it_Comuni_sample
@@ -28,14 +30,49 @@ def test_request_confini_amministrativi_comuni():
     assert isinstance(request_confini_amministrativi_comuni(), gpd.GeoDataFrame)
 
 
-def test_load_municipalities_frame(mocker, confini_amministrativi_comuni_sample):
+def test_add_bilingual_full_municipality_name(
+    mocker, confini_amministrativi_comuni_sample
+):
     mocker.patch(
         "spatial_italy.data.request_confini_amministrativi_comuni",
         return_value=confini_amministrativi_comuni_sample,
     )
-    gdf = load_municipalities_frame()
+    gdf = request_confini_amministrativi_comuni()
+    gdf = add_bilingual_full_municipality_name(gdf)
     assert isinstance(gdf, gpd.GeoDataFrame)
     assert all(gdf.loc[gdf.COMUNE == "Vandoies", "COMUNE_A"] == "Vandoies / Vintl")
+
+
+def test_add_municipality_populations(
+    mocker, confini_amministrativi_comuni_sample, POSAS_2023_it_Comuni_sample
+):
+    mocker.patch(
+        "spatial_italy.data.request_confini_amministrativi_comuni",
+        return_value=confini_amministrativi_comuni_sample,
+    )
+    mocker.patch(
+        "spatial_italy.data.request_POSAS_2023_it_Comuni",
+        return_value=POSAS_2023_it_Comuni_sample,
+    )
+    gdf = request_confini_amministrativi_comuni()
+    gdf = add_municipality_populations(gdf)
+    assert isinstance(gdf, gpd.GeoDataFrame)
+    assert "Population" in gdf.columns
+
+
+def test_load_municipalities_frame(
+    mocker, confini_amministrativi_comuni_sample, POSAS_2023_it_Comuni_sample
+):
+    mocker.patch(
+        "spatial_italy.data.request_confini_amministrativi_comuni",
+        return_value=confini_amministrativi_comuni_sample,
+    )
+    mocker.patch(
+        "spatial_italy.data.request_POSAS_2023_it_Comuni",
+        return_value=POSAS_2023_it_Comuni_sample,
+    )
+    gdf = load_municipalities_frame()
+    assert isinstance(gdf, gpd.GeoDataFrame)
 
     gdf = load_municipalities_frame(population=True)
     assert "Population" in gdf.columns

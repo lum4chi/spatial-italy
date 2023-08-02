@@ -1,8 +1,13 @@
-import leafmap.foliumap as leafmap
-import numpy as np
-import matplotlib
 import geopandas as gdp
-from spatial_italy.data import load_municipalities_frame
+import leafmap.foliumap as leafmap
+import matplotlib
+import numpy as np
+import pandas as pd
+
+from spatial_italy.data import (
+    load_municipalities_frame,
+    request_confini_amministrativi_comuni,
+)
 
 
 def create_italy_map() -> leafmap.Map:
@@ -16,7 +21,7 @@ def create_italy_map() -> leafmap.Map:
     return m
 
 
-def add_municipalities_population(m: leafmap.Map):
+def add_municipality_populations_layer(m: leafmap.Map):
     gdf = load_municipalities_frame(population=True)
     # Remove unnecessary columns
     data = gdf.assign(Population=gdf.Population.fillna(-1).astype(int)).drop(
@@ -52,5 +57,24 @@ def add_municipalities_population(m: leafmap.Map):
         # k=10,
         scheme="UserDefined",
         classification_kwds={"bins": bins},
+    )
+    return m
+
+
+def add_custom_layer(
+    m: leafmap.Map, df: pd.DataFrame, procom_label: str, value_label: str
+):
+    gdf = request_confini_amministrativi_comuni()
+    gdf = (
+        gdf.set_index("PRO_COM")
+        .join(df.set_index(procom_label)[value_label], how="right")
+        .reset_index()
+    )
+    m.add_data(
+        gdf,
+        column=value_label,
+        layer_name=value_label,
+        scheme="Quantiles",
+        cmap="Reds",
     )
     return m

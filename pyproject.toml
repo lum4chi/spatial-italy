@@ -15,6 +15,7 @@ streamlit = "^1.25.0"
 watchdog = "^3.0.0"
 leafmap = "^0.23.0"
 mapclassify = "^2.6.0"
+openpyxl = "^3.1.2"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.25.0"
