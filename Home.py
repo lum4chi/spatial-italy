@@ -28,8 +28,8 @@ st.sidebar.markdown(
     """
 )
 uploaded_file = st.sidebar.file_uploader("", type=["csv", "txt", "xlsx"])
-st.sidebar.divider()
 if uploaded_file:
+    st.sidebar.divider()
     if uploaded_file.name.split(".")[-1] == "xlsx":
         data = pd.read_excel(uploaded_file)
     else:
