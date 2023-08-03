@@ -70,8 +70,8 @@ def add_municipality_populations_layer(
         # k=10,
         scheme="UserDefined",
         classification_kwds={"bins": bins},
-        legend_position=legend_position,  # leafmap does not honor legend_position!
-        legend_kwds={"draggable": True},
+        legend_position=legend_position,  # leafmap does not honor position!
+        legend_kwds={"draggable": False},  # leafmap does not honor kwds!
     )
 
 
@@ -94,6 +94,6 @@ def add_custom_layer(
         layer_name=value_label,
         scheme="Quantiles",
         cmap="Reds",
-        legend_position=legend_position,  # leafmap does not honor legend_position!
-        legend_kwds={"draggable": True},
+        legend_position=legend_position,  # leafmap does not honor position!
+        legend_kwds={"draggable": False},  # leafmap does not honor kwds!
     )

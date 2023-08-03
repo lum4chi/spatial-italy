@@ -19,6 +19,6 @@ def test_add_municipality_populations_layer(
     )
     m = create_italy_map()
     n_children_pre = len(m._children)
-    m = add_municipality_populations_layer(m)
+    add_municipality_populations_layer(m)
     n_children_post = len(m._children)
     assert n_children_pre < n_children_post
