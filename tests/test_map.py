@@ -1,6 +1,10 @@
 import leafmap
 
-from spatial_italy.map import create_italy_map, add_municipality_populations_layer
+from spatial_italy.map import (
+    create_italy_map,
+    add_municipality_populations_layer,
+    add_seismic_zones_layer,
+)
 from .fixtures.confini import confini_amministrativi_comuni_sample
 
 
@@ -20,5 +24,13 @@ def test_add_municipality_populations_layer(
     m = create_italy_map()
     n_children_pre = len(m._children)
     add_municipality_populations_layer(m)
+    n_children_post = len(m._children)
+    assert n_children_pre < n_children_post
+
+
+def test_add_seismic_zones_layer():
+    m = create_italy_map()
+    n_children_pre = len(m._children)
+    add_seismic_zones_layer(m)
     n_children_post = len(m._children)
     assert n_children_pre < n_children_post

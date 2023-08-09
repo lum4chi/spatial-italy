@@ -5,15 +5,15 @@ from spatial_italy.commons import app_config
 from spatial_italy.map import (
     add_custom_layer,
     add_municipality_populations_layer,
+    add_seismic_zones_layer,
     create_italy_map,
-    legend_position_generator,
 )
 
 app_config("Home")
 
 # Sidebar
 ## Available layer selection
-LAYERS = ["Population"]
+LAYERS = ["Population", "Seismic zones"]
 st.sidebar.markdown("Select layers to display.")
 layers_to_add = st.sidebar.multiselect("Available layers:", LAYERS)
 
@@ -56,11 +56,13 @@ st.markdown(
     "Choose layers or upload your own data. Multiple layers can be choose by the top-right button. Legends can be dragged & dropped."
 )
 m = create_italy_map()
-legend_position = legend_position_generator()
 if layers_to_add and "Population" in layers_to_add:
-    pos = next(legend_position)
-    add_municipality_populations_layer(m, pos)
+    add_municipality_populations_layer(m)
+if layers_to_add and "Seismic zones" in layers_to_add:
+    add_seismic_zones_layer(m)
 if uploaded_file and not data.empty and value_labels:
-    for label, pos in zip(value_labels, legend_position):
-        add_custom_layer(m, data, procom_label, label, legend_position)
+    # TODO Legends for multiple layers are not managed properly,
+    # evaluate constraining to 2 layer max.
+    for label in value_labels:
+        add_custom_layer(m, data, procom_label, label)
 m.to_streamlit()

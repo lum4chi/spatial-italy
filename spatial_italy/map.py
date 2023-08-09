@@ -1,7 +1,3 @@
-from itertools import cycle
-from typing import Literal
-
-import geopandas as gdp
 import leafmap.foliumap as leafmap
 import matplotlib
 import numpy as np
@@ -10,14 +6,8 @@ import pandas as pd
 from spatial_italy.data import (
     load_municipalities_frame,
     request_confini_amministrativi_comuni,
+    request_zone_sismiche,
 )
-
-LEGEND_POSITIONS_TYPE = Literal["topleft", "topright", "bottomleft", "bottomright"]
-
-
-def legend_position_generator():
-    for position in cycle(LEGEND_POSITIONS_TYPE.__args__):
-        yield position
 
 
 def create_italy_map() -> leafmap.Map:
@@ -33,7 +23,6 @@ def create_italy_map() -> leafmap.Map:
 
 def add_municipality_populations_layer(
     m: leafmap.Map,
-    legend_position: LEGEND_POSITIONS_TYPE = "bottomright",
 ):
     gdf = load_municipalities_frame(population=True)
     # Remove unnecessary columns
@@ -70,8 +59,6 @@ def add_municipality_populations_layer(
         # k=10,
         scheme="UserDefined",
         classification_kwds={"bins": bins},
-        legend_position=legend_position,  # leafmap does not honor position!
-        legend_kwds={"draggable": False},  # leafmap does not honor kwds!
     )
 
 
@@ -80,7 +67,6 @@ def add_custom_layer(
     df: pd.DataFrame,
     procom_label: str,
     value_label: str,
-    legend_position: LEGEND_POSITIONS_TYPE = "bottomright",
 ):
     gdf = request_confini_amministrativi_comuni()
     gdf = (
@@ -94,6 +80,16 @@ def add_custom_layer(
         layer_name=value_label,
         scheme="Quantiles",
         cmap="Reds",
-        legend_position=legend_position,  # leafmap does not honor position!
-        legend_kwds={"draggable": False},  # leafmap does not honor kwds!
+    )
+
+
+def add_seismic_zones_layer(
+    m: leafmap.Map,
+):
+    gdf = request_zone_sismiche()
+    m.add_data(
+        gdf.assign(is_seismic=True),
+        column="is_seismic",
+        layer_name="Seismic zones",
+        colors="ae1d1d",
     )

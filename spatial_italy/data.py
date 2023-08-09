@@ -35,8 +35,8 @@ def load_population_by_municipalities():
 @st.cache_data
 def request_confini_amministrativi_comuni() -> gpd.GeoDataFrame:
     # EPSG:32632 WGS 84 / UTM zone 32N
-    shapes_url = "https://www.istat.it/storage/cartografia/confini_amministrativi/generalizzati/2023/Limiti01012023_g.zip"
-    with zipfile.ZipFile(io.BytesIO(requests.get(shapes_url).content)) as zip:
+    url = "https://www.istat.it/storage/cartografia/confini_amministrativi/generalizzati/2023/Limiti01012023_g.zip"
+    with zipfile.ZipFile(io.BytesIO(requests.get(url).content)) as zip:
         with tempfile.TemporaryDirectory() as tempdir:
             zip.extractall(tempdir)
             gdf = gpd.read_file(
@@ -72,4 +72,19 @@ def load_municipalities_frame(population: bool = False):
     gdf = add_bilingual_full_municipality_name(gdf)
     if population:
         gdf = add_municipality_populations(gdf)
+    return gdf
+
+
+@st.cache_data
+def request_zone_sismiche():
+    # Source: http://zonesismiche.mi.ingv.it/documenti/App2.pdf
+    url = "http://zonesismiche.mi.ingv.it/elaborazioni/dati_di_ingresso/ZS9.ZIP"
+    with zipfile.ZipFile(io.BytesIO(requests.get(url).content)) as zip:
+        with tempfile.TemporaryDirectory() as tempdir:
+            zip.extractall(tempdir)
+            gdf = gpd.read_file(
+                os.path.join(tempdir, "zs9.shp"),
+                encoding="UTF-8",
+            )
+    gdf.crs = "epsg:4326"
     return gdf

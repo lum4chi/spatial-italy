@@ -8,6 +8,7 @@ from spatial_italy.data import (
     request_POSAS_2023_it_Comuni,
     add_municipality_populations,
     load_municipalities_frame,
+    request_zone_sismiche,
 )
 from .fixtures.demografia import POSAS_2023_it_Comuni_sample
 from .fixtures.confini import confini_amministrativi_comuni_sample
@@ -76,3 +77,7 @@ def test_load_municipalities_frame(
 
     gdf = load_municipalities_frame(population=True)
     assert "Population" in gdf.columns
+
+
+def test_request_zone_sismiche():
+    assert isinstance(request_zone_sismiche(), gpd.GeoDataFrame)
