@@ -2,6 +2,7 @@ import leafmap.foliumap as leafmap
 import matplotlib
 import numpy as np
 import pandas as pd
+import streamlit as st
 
 from spatial_italy.data import (
     load_municipalities_frame,
@@ -24,7 +25,7 @@ def create_italy_map() -> leafmap.Map:
 def add_municipality_populations_layer(
     m: leafmap.Map,
 ):
-    gdf = load_municipalities_frame(population=True)
+    gdf = st.cache_data(load_municipalities_frame)(population=True)
     # Remove unnecessary columns
     data = gdf.assign(Population=gdf.Population.fillna(-1).astype(int)).drop(
         columns="COD_RIP COD_REG COD_PROV COD_CM COD_UTS PRO_COM_T COMUNE CC_UTS Shape_Leng".split()
@@ -68,7 +69,7 @@ def add_custom_layer(
     procom_label: str,
     value_label: str,
 ):
-    gdf = request_confini_amministrativi_comuni()
+    gdf = st.cache_data(request_confini_amministrativi_comuni)()
     gdf = (
         gdf.set_index("PRO_COM")
         .join(df.set_index(procom_label)[value_label].dropna(), how="right")
@@ -86,7 +87,7 @@ def add_custom_layer(
 def add_seismic_zones_layer(
     m: leafmap.Map,
 ):
-    gdf = request_zone_sismiche()
+    gdf = st.cache_data(request_zone_sismiche)()
     m.add_data(
         gdf.assign(is_seismic=True),
         column="is_seismic",
