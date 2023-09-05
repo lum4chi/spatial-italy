@@ -2,7 +2,7 @@ import io
 import os
 import tempfile
 import zipfile
-
+import numpy as np
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -64,11 +64,23 @@ def add_municipality_populations(gdf: gpd.GeoDataFrame):
     return gdf
 
 
-def load_municipalities_frame(population: bool = False):
+def add_seismic_municipalities(gdf: gpd.GeoDataFrame):
+    df = request_comuni_sismici().rename(columns={"ZONA_SISMICA": "Seismic class"})
+    gdf = (
+        gdf.set_index("PRO_COM")
+        .join(df.set_index("COD_ISTAT_COMUNE")["Seismic class"])
+        .reset_index()
+    )
+    return gdf
+
+
+def load_municipalities_frame(population: bool = False, seismic: bool = False):
     gdf = request_confini_amministrativi_comuni()
     gdf = add_bilingual_full_municipality_name(gdf)
     if population:
         gdf = add_municipality_populations(gdf)
+    if seismic:
+        gdf = add_seismic_municipalities(gdf)
     return gdf
 
 
@@ -84,3 +96,16 @@ def request_zone_sismiche():
             )
     gdf.crs = "epsg:4326"
     return gdf
+
+
+def request_comuni_sismici():
+    # Source: https://rischi.protezionecivile.gov.it/it/sismico/attivita/classificazione-sismica/
+    url = "https://rischi.protezionecivile.gov.it/static/9c05a931ee41d569fd2a3e2b37f558e4/classificazione-sismica-aggiornata-aprile-2023.csv"
+    df = pd.read_table(
+        url,
+        sep=";",
+        encoding="latin1",
+    )
+    # Incorrect data found
+    df.loc[df.ZONA_SISMICA == "03-apr", "ZONA_SISMICA"] = np.nan
+    return df

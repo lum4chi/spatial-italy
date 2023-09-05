@@ -6,6 +6,7 @@ from spatial_italy.map import (
     add_custom_layer,
     add_municipality_populations_layer,
     add_seismic_zones_layer,
+    add_seismic_municipalities_layer,
     create_italy_map,
 )
 
@@ -13,7 +14,7 @@ app_config("Home")
 
 # Sidebar
 ## Available layer selection
-LAYERS = ["Population", "Seismic zones"]
+LAYERS = ["Population", "Seismic zones", "Seismic class"]
 st.sidebar.markdown("Select layers to display.")
 layers_to_add = st.sidebar.multiselect("Available layers:", LAYERS)
 
@@ -60,6 +61,8 @@ if layers_to_add and "Population" in layers_to_add:
     add_municipality_populations_layer(m)
 if layers_to_add and "Seismic zones" in layers_to_add:
     add_seismic_zones_layer(m)
+if layers_to_add and "Seismic class" in layers_to_add:
+    add_seismic_municipalities_layer(m)
 if uploaded_file and not data.empty and value_labels:
     # TODO Legends for multiple layers are not managed properly,
     # evaluate constraining to 2 layer max.
