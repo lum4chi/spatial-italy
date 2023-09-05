@@ -94,3 +94,45 @@ def add_seismic_zones_layer(
         layer_name="Seismic zones",
         colors="ae1d1d",
     )
+
+
+def add_seismic_municipalities_layer(
+    m: leafmap.Map,
+):
+    gdf = st.cache_data(load_municipalities_frame)(seismic=True)
+    # Remove unnecessary rows/columns
+    gdf = gdf.dropna(subset="Seismic class")
+    data = gdf.drop(
+        columns="COD_RIP COD_REG COD_PROV COD_CM COD_UTS PRO_COM_T COMUNE CC_UTS Shape_Leng".split()
+    )
+    # Scale (dangerous to innocuos)
+    map_scale = {
+        "1": 0,  # Red
+        "1-2A": 1,  # Dark Orange
+        "2": 2,  # Orange
+        "2A": 3,  # Yellow
+        "2A-2B": 4,  # Bright Yellow
+        "2B": 5,  # Lime Green
+        "2A-3A-3B": 6,  # Yellowish Green
+        "2B-3A": 7,  # Greenish Yellow
+        "3": 8,  # Green
+        "3S": 9,  # Light Green
+        "3A": 10,  # Greenish Cyan
+        "3A-3B": 11,  # Cyanish Green
+        "3B": 12,  # Cyan
+        "4": 13,  # Bright Cyan
+    }
+    data["Seismic class"] = data["Seismic class"].apply(
+        lambda cl: f"{map_scale[cl]}. {cl}"
+    )
+    # Map
+    m.add_data(
+        data,
+        column="Seismic class",
+        cmap="autumn",
+        # colors=gdf["Seismic class"].map(map_scale),
+        legend_title="Seismic class",
+        layer_name="Seismic class",
+        scheme="UserDefined",
+        classification_kwds={"bins": range(0, len(map_scale))},
+    )
