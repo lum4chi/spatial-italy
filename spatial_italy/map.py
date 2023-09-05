@@ -129,8 +129,7 @@ def add_seismic_municipalities_layer(
     m.add_data(
         data,
         column="Seismic class",
-        cmap="autumn",
-        # colors=gdf["Seismic class"].map(map_scale),
+        cmap="Reds_r",
         legend_title="Seismic class",
         layer_name="Seismic class",
         scheme="UserDefined",
