@@ -123,7 +123,7 @@ def add_seismic_municipalities_layer(
         "4": 13,  # Bright Cyan
     }
     data["Seismic class"] = data["Seismic class"].apply(
-        lambda cl: f"{map_scale[cl]}. {cl}"
+        lambda cl: f"{map_scale[cl]:2d}. {cl}"
     )
     # Map
     m.add_data(
