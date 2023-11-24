@@ -21,6 +21,7 @@ def load_population_by_municipalities():
     df = request_POSAS_2023_it_Comuni()
     # Compute total population by Comune
     df["Population"] = df["Totale maschi"] + df["Totale femmine"]
+    df = df[df["Età"] != 999]
     df = (
         df.groupby(["Codice comune", "Comune"])["Population"]
         .sum()
